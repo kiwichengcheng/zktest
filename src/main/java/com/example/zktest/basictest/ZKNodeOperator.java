@@ -1,10 +1,7 @@
 package com.example.zktest.basictest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.ACL;
 
 import java.io.IOException;
@@ -15,7 +12,7 @@ public class ZKNodeOperator implements Watcher {
 
     private ZooKeeper zooKeeper = null;
     public static final String zkServerPath = "192.168.174.128:2181,192.168.174.132:2181,192.168.174.133:2181";
-    public static final Integer timeout = 5000;
+    public static final Integer timeout = 15000;
 
     public ZKNodeOperator() {
     }
@@ -23,6 +20,7 @@ public class ZKNodeOperator implements Watcher {
     public ZKNodeOperator(String connectString){
         try{
             zooKeeper = new ZooKeeper(connectString, timeout, new ZKNodeOperator());
+            Thread.sleep(20000);
         }catch (IOException e){
             e.printStackTrace();
             if(zooKeeper != null){
@@ -32,6 +30,8 @@ public class ZKNodeOperator implements Watcher {
                     e1.printStackTrace();
                 }
             }
+        }catch (InterruptedException e){
+            e.printStackTrace();
         }
     }
     public void createZKNode(String path, byte[] data, List<ACL> acls) {
@@ -52,19 +52,20 @@ public class ZKNodeOperator implements Watcher {
              * 			EPHEMERAL：临时节点
              * 			EPHEMERAL_SEQUENTIAL：临时顺序节点
              */
-            result = zooKeeper.create(path, data, acls, CreateMode.PERSISTENT);
+            //result = zooKeeper.create(path, data, acls, CreateMode.PERSISTENT);
 
-//			String ctx = "{'create':'success'}";
-//			zookeeper.create(path, data, acls, CreateMode.PERSISTENT, new CreateCallBack(), ctx);
+			String ctx = "{'create':'success'}";
+			zooKeeper.create(path, data, acls, CreateMode.PERSISTENT, new CreateCallBack(), ctx);
 
             System.out.println("创建节点：\t" + result + "\t成功...");
-            new Thread().sleep(2000);
+            new Thread().sleep(20000);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     public static void main(String[] args) {
         ZKNodeOperator zkNodeOperator = new ZKNodeOperator(zkServerPath);
+        zkNodeOperator.createZKNode("/testnode","testnode".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE);
     }
 
     @Override

@@ -9,7 +9,7 @@ import org.apache.zookeeper.ZooKeeper;
 @Slf4j
 public class ZKConnect implements Watcher {
 
-    public static final String zkServerPath = "192.168.174.128:2181,192.168.174.132:2181,192.168.174.133:2181";
+    public static final String zkServerPath = "192.168.174.128:2181";
     public static final Integer timeout = 5000;
     public static void main(String[] args) throws Exception{
         ZooKeeper zooKeeper = new ZooKeeper(zkServerPath,timeout, new ZKConnect());
@@ -17,7 +17,7 @@ public class ZKConnect implements Watcher {
         log.debug("客户端开始连接zookeeper服务器...");
         log.debug("连接状态：{}", zooKeeper.getState());
 
-        Thread.sleep(2000);
+        Thread.sleep(20000);
         log.debug("连接状态:{}", zooKeeper.getState());
     }
 
